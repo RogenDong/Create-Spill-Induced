@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "org.dong.leakinduced.mixin",
+  "package": "org.dong.spillinduced.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "CreateLeakInduced.refmap.json",
   "mixins": [
