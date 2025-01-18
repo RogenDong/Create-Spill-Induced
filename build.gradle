@@ -16,10 +16,10 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'org.dong'
-version = "${mod_version}-${mc_version}"
+version = "${mc_version}-${mod_version}"
 
 java {
-    archivesBaseName = 'createspillinduced'
+    archivesBaseName = project.name
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
@@ -60,10 +60,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'createspillinduced'
+            property 'forge.enabledGameTestNamespaces', mod_id
 
             mods {
-                createspillinduced {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -73,9 +73,9 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'createspillinduced'
+            property 'forge.enabledGameTestNamespaces', mod_id
             mods {
-                createspillinduced {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -88,9 +88,9 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'createspillinduced'
+            property 'forge.enabledGameTestNamespaces', mod_id
             mods {
-                createspillinduced {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -102,9 +102,9 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'createspillinduced', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', project.name, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
-                createspillinduced {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -163,7 +163,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "create-spill-induced",
+                "Specification-Title"     : project.name,
                 "Specification-Vendor"    : "dong",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,

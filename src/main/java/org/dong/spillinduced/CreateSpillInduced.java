@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(value = CreateSpillInduced.MOD_ID)
 public class CreateSpillInduced {
 
-    public static final String MOD_ID = "create_spill_induced";
+    public static final String MOD_ID = "createspillinduced";
     public static final Logger LOGGER = LogManager.getLogger();
 
     public CreateSpillInduced() {
