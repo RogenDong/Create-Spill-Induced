@@ -13,8 +13,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.CreateSpillInduced;
 
-import java.util.Objects;
-
 @EventBusSubscriber
 public class HandleSpillEvents {
     private static final Logger LOGGER = CreateSpillInduced.LOGGER;
