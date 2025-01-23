@@ -10,16 +10,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dong.spillinduced.CreateSpillInduced;
 
 @EventBusSubscriber
 public class HandleSpillEvents {
-    private static final Logger LOGGER = CreateSpillInduced.LOGGER;
+    private final Logger LOGGER = LogManager.getLogger();
 
     private static final Block[] POOL = new Block[]{Blocks.NETHERRACK, Blocks.DIORITE, Blocks.GRANITE, Blocks.ANDESITE, Blocks.TUFF};
-
-    private static final String LAVA_REG_NAME = Fluids.LAVA.getRegistryName().toString();
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void spillWithFlowingWater(PipeCollisionEvent.Spill event) {
@@ -28,6 +26,7 @@ public class HandleSpillEvents {
         if (pf != Fluids.LAVA || wf != Fluids.FLOWING_WATER) return;
 
         Level world = event.getLevel();
+
         BlockState below = world.getBlockState(event.getPos().below());
         if (below.getBlock() == Blocks.BEDROCK) {
             Block block = POOL[world.random.nextInt(0, POOL.length)];
