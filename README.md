@@ -1,2 +1,2 @@
 # Create-Spill-Induced
-An addon that detects pipeline spills
+An addon that detects pipe spills
