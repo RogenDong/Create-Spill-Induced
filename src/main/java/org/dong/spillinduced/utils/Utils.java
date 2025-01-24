@@ -5,8 +5,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Objects;
-
 public interface Utils {
 
     static String getFluidId(FlowingFluid fluid) {
