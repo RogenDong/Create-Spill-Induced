@@ -27,23 +27,23 @@ public class ConfigRootNode {
     public static ConfigRootNode defaultConfig() {
         HashMap<Block, Integer> results = new HashMap<>();
         ConfigRootNode def = new ConfigRootNode();
-        def.basaltLike = new ArrayList<>(1);
         def.cobbleLike = new ArrayList<>(4);
-        def.stoneLike = new ArrayList<>(1);
+//        def.basaltLike = new ArrayList<>(1);
+//        def.stoneLike = new ArrayList<>(1);
 
-        results.put(Blocks.BASALT, 100);
-        def.basaltLike.add(new BasaltGen(Fluids.LAVA, Fluids.WATER, Blocks.SOUL_SOIL, Blocks.BLUE_ICE, results));
-        results.clear();
+//        results.put(Blocks.BASALT, 100);
+//        def.basaltLike.add(new BasaltGen(Fluids.LAVA, Fluids.WATER, Blocks.SOUL_SOIL, Blocks.BLUE_ICE, results));
+//        results.clear();
+
+//        results.put(Blocks.STONE, 100);
+//        def.stoneLike.add(new StoneGen(Fluids.LAVA, Fluids.WATER, Blocks.BEDROCK, results));
+//        results.clear();
 
         results.put(Blocks.NETHERRACK, 25);
         results.put(Blocks.ANDESITE, 25);
         results.put(Blocks.GRANITE, 25);
         results.put(Blocks.DIORITE, 25);
         def.cobbleLike.add(new CobbleGen(Fluids.LAVA, Fluids.WATER, Blocks.BEDROCK, results));
-        results.clear();
-
-        results.put(Blocks.STONE, 100);
-        def.stoneLike.add(new StoneGen(Fluids.LAVA, Fluids.WATER, Blocks.BEDROCK, results));
         return def;
     }
 }

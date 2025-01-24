@@ -8,7 +8,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.CreateSpillInduced;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
+import java.util.Map;
 
 public class ResultMapping {
     private static final Logger LOGGER = CreateSpillInduced.LOGGER;

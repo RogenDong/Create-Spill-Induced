@@ -4,8 +4,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.FlowingFluid;
 import org.dong.spillinduced.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class CollisionType {
@@ -28,7 +27,7 @@ public abstract class CollisionType {
     /**
      * 刷石权重
      */
-    public List<WeightedBlock> results;
+    public Map<String, Integer> results;
 
     public CollisionType() {
     }
@@ -42,11 +41,11 @@ public abstract class CollisionType {
         this.pipeFluid = Utils.getFluidId(pipeFluid);
         this.impactFluid = Utils.getFluidId(impactFluid);
         this.bottomBlock = Utils.getBlockId(bottomBlock);
-        this.results = new ArrayList<>(results.size());
+        this.results = new HashMap<>(results.size());
         for (Map.Entry<Block, Integer> e : results.entrySet()) {
             String bid = Utils.getBlockId(e.getKey());
             if (bid == null) continue;
-            this.results.add(new WeightedBlock(bid, e.getValue()));
+            this.results.put(bid, e.getValue());
         }
     }
 }

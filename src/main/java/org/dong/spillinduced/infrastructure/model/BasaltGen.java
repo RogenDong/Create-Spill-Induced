@@ -8,10 +8,7 @@ import java.util.Map;
 
 public class BasaltGen extends CollisionType {
 
-    /**
-     * 催化方块
-     */
-    public String catalystBlock;
+    public String otherBlock;
 
     public BasaltGen() {
     }
@@ -20,10 +17,10 @@ public class BasaltGen extends CollisionType {
             FlowingFluid pipeFluid,
             FlowingFluid impactFluid,
             Block bottomBlock,
-            Block catalystBlock,
+            Block otherBlock,
             Map<Block, Integer> results
     ) {
         super(pipeFluid, impactFluid, bottomBlock, results);
-        this.catalystBlock = Utils.getBlockId(catalystBlock);
+        this.otherBlock = Utils.getBlockId(otherBlock);
     }
 }
