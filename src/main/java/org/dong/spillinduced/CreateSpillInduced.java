@@ -11,6 +11,7 @@ import org.dong.spillinduced.utils.ModConfig;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(value = CreateSpillInduced.MOD_ID)
 public class CreateSpillInduced {
+    public static final Logger LOGGER = LogManager.getLogger(CreateSpillInduced.MOD_ID);
 
     public static final String MOD_ID = "createspillinduced";
 
