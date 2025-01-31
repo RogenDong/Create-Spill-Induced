@@ -5,9 +5,8 @@ import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.Constants;
 import org.dong.spillinduced.CreateSpillInduced;
-import org.dong.spillinduced.infrastructure.model.BasaltGen;
-import org.dong.spillinduced.infrastructure.model.CollisionType;
 import org.dong.spillinduced.infrastructure.model.ConfigRootNode;
+import org.dong.spillinduced.infrastructure.model.DefaultGen;
 import org.dong.spillinduced.infrastructure.model.ResultMapping;
 
 import java.io.File;
@@ -16,7 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 
 /**
  * 读取配置
@@ -80,9 +82,7 @@ public class ModConfig {
         }
 
         // mapping
-        config.basaltLike.forEach(this::mapping);
-        config.cobbleLike.forEach(this::mapping);
-        config.stoneLike.forEach(this::mapping);
+        config.gen.forEach(this::mapping);
     }
 
     public void reload() {
@@ -100,27 +100,22 @@ public class ModConfig {
 
         LOGGER.info("重新生成映射...");
         resultMapping.clear();
-        config.basaltLike.forEach(this::mapping);
-        config.cobbleLike.forEach(this::mapping);
-        config.stoneLike.forEach(this::mapping);
+        config.gen.forEach(this::mapping);
     }
 
-    private void mapping(CollisionType gen) {
+    private void mapping(DefaultGen gen) {
         // 不接受配置其他方块为空气
-        if (gen instanceof BasaltGen t && (t.otherBlock == null
-                || t.otherBlock.isEmpty()
-                || Constants.ID_AIR.contains(t.otherBlock))) return;
+        if (gen.otherBlock != null && !gen.otherBlock.isEmpty() && Constants.ID_AIR.contains(gen.otherBlock)) return;
+        if (gen.results.isEmpty()) return;
         try {
             ResultMapping rm = new ResultMapping(gen);
             resultMapping.add(rm);
             if (LOGGER.isDebugEnabled()) {
-                String onBlock = gen instanceof BasaltGen bg
-                        ? bg.bottomBlock + ',' + bg.otherBlock
-                        : gen.bottomBlock;
-                List<String> tmp = gen.results.entrySet().stream()
-                        .map(e -> e.getKey() + '@' + e.getValue()).toList();
-                LOGGER.info("{}: ({} + {} on {})=[{}]",
-                        rm.genType.getSimpleName(), gen.pipeFluid, gen.impactFluid, onBlock, String.join(", ", tmp));
+                String onBlock = gen.bottomBlock;
+                if (gen.otherBlock != null && !gen.otherBlock.isEmpty()) onBlock += ',' + gen.otherBlock;
+                List<String> tmp = gen.results.entrySet().stream().map(e -> e.getKey() + '@' + e.getValue()).toList();
+                LOGGER.info("({} + {} on {})=[{}]",
+                        gen.pipeFluid, gen.impactFluid, onBlock, String.join(", ", tmp));
             }
         } catch (InvalidPropertiesFormatException ie) {
             LOGGER.error(ie.getMessage());

@@ -17,32 +17,21 @@ import java.util.Map;
 
 public class ResultMapping {
     private static final Logger LOGGER = CreateSpillInduced.LOGGER;
-    public Class<? extends CollisionType> genType;
     public Fluid pipeFluid;
     public Fluid impactFluid;
     public Block bottomBlock;
     public Block otherBlock;
     public List<WeightedWrapper> results;
 
-    public ResultMapping(CollisionType config) throws InvalidPropertiesFormatException {
+    public ResultMapping(DefaultGen config) throws InvalidPropertiesFormatException {
         pipeFluid = getFluid(config.pipeFluid);
         impactFluid = getFluid(config.impactFluid);
         bottomBlock = getBlock(config.bottomBlock);
+        otherBlock = getBlock(config.otherBlock);
         results = new ArrayList<>(config.results.size());
         for (Map.Entry<String, Integer> e : config.results.entrySet()) {
             Block r = getBlock(e.getKey());
             results.add(new WeightedWrapper(r, e.getValue()));
-        }
-        if (config instanceof BasaltGen bg) {
-            otherBlock = getBlock(bg.otherBlock);
-            genType = BasaltGen.class;
-        } else if (config instanceof CobbleGen)
-            genType = CobbleGen.class;
-        else if (config instanceof StoneGen)
-            genType = StoneGen.class;
-        else {
-            genType = config.getClass();
-            LOGGER.info("custom collision type: {}", genType);
         }
     }
 
