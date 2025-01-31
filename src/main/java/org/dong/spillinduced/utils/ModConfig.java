@@ -3,6 +3,7 @@ package org.dong.spillinduced.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.Logger;
+import org.dong.spillinduced.Constants;
 import org.dong.spillinduced.CreateSpillInduced;
 import org.dong.spillinduced.infrastructure.model.BasaltGen;
 import org.dong.spillinduced.infrastructure.model.CollisionType;
@@ -15,10 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InvalidPropertiesFormatException;
-import java.util.List;
+import java.util.*;
 
 /**
  * 读取配置
@@ -108,6 +106,10 @@ public class ModConfig {
     }
 
     private void mapping(CollisionType gen) {
+        // 不接受配置其他方块为空气
+        if (gen instanceof BasaltGen t && (t.otherBlock == null
+                || t.otherBlock.isEmpty()
+                || Constants.ID_AIR.contains(t.otherBlock))) return;
         try {
             ResultMapping rm = new ResultMapping(gen);
             resultMapping.add(rm);

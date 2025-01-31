@@ -3,9 +3,11 @@ package org.dong.spillinduced.infrastructure.model;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Logger;
+import org.dong.spillinduced.Constants;
 import org.dong.spillinduced.CreateSpillInduced;
 
 import java.util.ArrayList;
@@ -57,6 +59,7 @@ public class ResultMapping {
     }
 
     private static Block getBlock(String id) throws InvalidPropertiesFormatException {
+        if (id == null || id.isEmpty() || Constants.ID_AIR.contains(id)) return Blocks.AIR;
         Block f = ForgeRegistries.BLOCKS.getValue(getResLoc(id));
         if (f == null) throw new InvalidPropertiesFormatException(String.format("\"%s\" is incorrect!", id));
         return f;

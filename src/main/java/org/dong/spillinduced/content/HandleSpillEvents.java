@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -75,12 +76,16 @@ public class HandleSpillEvents {
         List<WeightedWrapper> ls = null;
         for (ResultMapping m : ModConfig.getInstance().resultMapping) {
             if (m.genType == StoneGen.class) continue;
-            if (!m.pipeFluid.isSame(pf) || !m.impactFluid.isSame(wf) || m.bottomBlock != bottomBlock)
+            if (!m.pipeFluid.isSame(pf) || !m.impactFluid.isSame(wf))
                 continue;
 
-            if (m.genType == BasaltGen.class && !isAround(m.otherBlock)) {
+            // 如果配置下方方块为空气，表示任意匹配
+            if (m.bottomBlock != Blocks.AIR && m.bottomBlock != bottomBlock)
                 continue;
-            }
+
+            // 不接受配置其他方块为空气
+            if (m.genType == BasaltGen.class && m.otherBlock != null && m.otherBlock != Blocks.AIR && !isAround(m.otherBlock))
+                continue;
 
             ls = m.results;
             break;
