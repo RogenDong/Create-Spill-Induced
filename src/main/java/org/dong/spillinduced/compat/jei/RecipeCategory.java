@@ -11,6 +11,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -79,9 +80,9 @@ public class RecipeCategory implements IRecipeCategory<RecipeWrapper> {
     public void draw(RecipeWrapper recipe, @NotNull IRecipeSlotsView v, GuiGraphics guiGraphics, double x, double y) {
         Minecraft minecraft = Minecraft.getInstance();
         Weight w = recipe.result.getWeight();
-        String s = String.format("%s: %d", I18n.get("createspillinduced.jei.weight"), w.asInt());
-        minecraft.font.drawInBatch(s, 0, 0, 0xFF808080, false,
-                guiGraphics.pose().last().pose(), guiGraphics.bufferSource(),
-                net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, 15728880, false);
+        minecraft.font.drawInBatch(I18n.get("createspillinduced.jei.weight"),
+                0, 0, 0xFF808080, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880, false);
+        minecraft.font.drawInBatch(w.toString(),
+                4, 8, 0xFF808080, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880, false);
     }
 }
