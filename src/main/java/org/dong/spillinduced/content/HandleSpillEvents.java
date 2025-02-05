@@ -2,16 +2,12 @@ package org.dong.spillinduced.content;
 
 import com.simibubi.create.api.event.PipeCollisionEvent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -20,7 +16,6 @@ import org.dong.spillinduced.CreateSpillInduced;
 import org.dong.spillinduced.infrastructure.model.ResultMapping;
 import org.dong.spillinduced.infrastructure.model.WeightedWrapper;
 import org.dong.spillinduced.utils.ModConfig;
-import org.dong.spillinduced.utils.Utils;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,28 +45,40 @@ public class HandleSpillEvents {
                 w = getAround(world, eventPos.west()),
                 n = getAround(world, eventPos.north());
 
+        List<ResultMapping> resultMappings = ModConfig.getInstance().resultMapping;
         List<WeightedWrapper> ls = null;
-        for (ResultMapping m : ModConfig.getInstance().resultMapping) {
-            if (!m.pipeFluid.isSame(pf) || !m.impactFluid.isSame(wf))
-                continue;
 
-            // 如果配置下方方块为空气，表示任意匹配
-            if (m.bottomBlock != Blocks.AIR && m.bottomBlock != bottomBlock)
-                continue;
+        // 周围存在 otherBlock 的情况优先
+        for (ResultMapping m : resultMappings) {
+            if (m.otherBlock == Blocks.AIR) continue;
+            if (!m.pipeFluid.isSame(pf) || !m.impactFluid.isSame(wf)) continue;
+            // 空气，表示任意匹配
+            if (m.bottomBlock != Blocks.AIR && m.bottomBlock != bottomBlock) continue;
 
-            // 不接受配置其他方块为空气
-            if (m.otherBlock != null && m.otherBlock != Blocks.AIR) {
-                if (a == m.otherBlock || e == m.otherBlock || s == m.otherBlock || w == m.otherBlock || n == m.otherBlock) {
-                    ls = m.results;
-                    break;
-                }
-                continue;
+            if (a == m.otherBlock || e == m.otherBlock || s == m.otherBlock || w == m.otherBlock || n == m.otherBlock) {
+                ls = m.results;
+                break;
             }
-
-            ls = m.results;
-            break;
         }
-        if (ls == null || ls.isEmpty()) return;
+        if (ls != null) {
+            Optional<WeightedWrapper> it = WeightedRandom.getRandomItem(world.getRandom(), ls);
+            if (it.isPresent()) {
+                Block b = it.get().getBlock();
+                event.setState(b.defaultBlockState());
+            }
+            return;
+        }
+
+        // 继续找没有 otherBlock 的配置
+        for (ResultMapping m : resultMappings) {
+            if (m.otherBlock != Blocks.AIR) continue;
+            if (!m.pipeFluid.isSame(pf) || !m.impactFluid.isSame(wf)) continue;
+            if (m.bottomBlock == Blocks.AIR || m.bottomBlock == bottomBlock) {
+                ls = m.results;
+                break;
+            }
+        }
+        if (ls == null) return;
 
         Optional<WeightedWrapper> it = WeightedRandom.getRandomItem(world.getRandom(), ls);
         if (it.isPresent()) {
