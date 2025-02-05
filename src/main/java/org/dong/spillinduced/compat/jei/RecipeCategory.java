@@ -59,7 +59,7 @@ public class RecipeCategory implements IRecipeCategory<RecipeWrapper> {
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, RecipeWrapper recipe, @NotNull IFocusGroup g) {
         // other block
-        if (recipe.otherBlock != null && recipe.otherBlock != Blocks.AIR) {
+        if (recipe.otherBlock != Blocks.AIR) {
             builder.addSlot(RecipeIngredientRole.INPUT, OFFSET * 2, 0).addItemStack(new ItemStack(recipe.otherBlock));
         }
         // pipe fluid

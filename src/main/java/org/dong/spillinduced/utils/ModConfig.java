@@ -3,7 +3,6 @@ package org.dong.spillinduced.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.Logger;
-import org.dong.spillinduced.Constants;
 import org.dong.spillinduced.CreateSpillInduced;
 import org.dong.spillinduced.infrastructure.model.ConfigRootNode;
 import org.dong.spillinduced.infrastructure.model.DefaultGen;
@@ -59,7 +58,8 @@ public class ModConfig {
                 String json = new String(bs.raw, StandardCharsets.UTF_8);
                 config = gson.fromJson(json, ConfigRootNode.class);
             } catch (Exception e) {
-                LOGGER.error("", e);
+                LOGGER.error("配置文件反序列化失败!!", e);
+                return;
             }
         }
 
@@ -96,7 +96,13 @@ public class ModConfig {
         LOGGER.info("重载配置文件...");
         configCache = bs.md5;
         String json = new String(bs.raw, StandardCharsets.UTF_8);
-        ConfigRootNode config = gson.fromJson(json, ConfigRootNode.class);
+        ConfigRootNode config;
+        try {
+            config = gson.fromJson(json, ConfigRootNode.class);
+        } catch (Exception e) {
+            LOGGER.error("配置文件反序列化失败!!", e);
+            return;
+        }
 
         LOGGER.info("重新生成映射...");
         resultMapping.clear();
@@ -104,19 +110,17 @@ public class ModConfig {
     }
 
     private void mapping(DefaultGen gen) {
-        // 不接受配置其他方块为空气
-        if (gen.otherBlock != null && !gen.otherBlock.isEmpty() && Constants.ID_AIR.contains(gen.otherBlock)) return;
-        if (gen.results.isEmpty()) return;
+        if (gen.pipeFluid == null || gen.pipeFluid.isEmpty()
+                || gen.impactFluid == null || gen.impactFluid.isEmpty()
+                || gen.results == null || gen.results.isEmpty()
+        ) {
+            LOGGER.info("invalid!!!: {}", gen);
+            return;
+        }
         try {
             ResultMapping rm = new ResultMapping(gen);
             resultMapping.add(rm);
-            if (LOGGER.isDebugEnabled()) {
-                String onBlock = gen.bottomBlock;
-                if (gen.otherBlock != null && !gen.otherBlock.isEmpty()) onBlock += ',' + gen.otherBlock;
-                List<String> tmp = gen.results.entrySet().stream().map(e -> e.getKey() + '@' + e.getValue()).toList();
-                LOGGER.info("({} + {} on {})=[{}]",
-                        gen.pipeFluid, gen.impactFluid, onBlock, String.join(", ", tmp));
-            }
+            LOGGER.info(gen.toString());
         } catch (InvalidPropertiesFormatException ie) {
             LOGGER.error(ie.getMessage());
         } catch (Exception e) {
