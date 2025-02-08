@@ -3,7 +3,6 @@ package org.dong.spillinduced.compat.jei;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.compat.jei.DoubleItemIcon;
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -15,13 +14,11 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.Weight;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +42,7 @@ public class RecipeCategory implements IRecipeCategory<RecipeWrapper> {
 
     @Override
     public @NotNull Component getTitle() {
-        return new TextComponent(I18n.get("createspillinduced.jei.title"));
+        return Component.literal(I18n.get("createspillinduced.jei.title"));
     }
 
     @Override
@@ -65,12 +62,12 @@ public class RecipeCategory implements IRecipeCategory<RecipeWrapper> {
             builder.addSlot(RecipeIngredientRole.INPUT, OFFSET * 2, 0).addItemStack(new ItemStack(recipe.otherBlock));
         }
         // pipe fluid
-        builder.addSlot(RecipeIngredientRole.INPUT, 0, OFFSET).addIngredient(ForgeTypes.FLUID_STACK, new FluidStack(recipe.pipeFluid, 500));
+        builder.addSlot(RecipeIngredientRole.INPUT, 0, OFFSET).addFluidStack(recipe.pipeFluid, 100);
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, OFFSET, OFFSET).addItemStack(AllBlocks.FLUID_PIPE.asStack());
         // result
         builder.addSlot(RecipeIngredientRole.OUTPUT, OFFSET * 2, OFFSET).addItemStack(new ItemStack(recipe.result.getBlock()));
         // impact fluid
-        builder.addSlot(RecipeIngredientRole.INPUT, OFFSET * 3, OFFSET).addIngredient(ForgeTypes.FLUID_STACK, new FluidStack(recipe.impactFluid, 500));
+        builder.addSlot(RecipeIngredientRole.INPUT, OFFSET * 3, OFFSET).addFluidStack(recipe.impactFluid, 500);
         // bottom
         if (recipe.bottomBlock != Blocks.AIR) {
             builder.addSlot(RecipeIngredientRole.INPUT, OFFSET * 2, OFFSET * 2).addItemStack(new ItemStack(recipe.bottomBlock));
@@ -84,19 +81,5 @@ public class RecipeCategory implements IRecipeCategory<RecipeWrapper> {
         Weight w = recipe.result.getWeight();
         minecraft.font.draw(stack, I18n.get("createspillinduced.jei.weight"), 0, 0, 0xFF808080);
         minecraft.font.draw(stack, w.toString(), 4, 8, 0xFF808080);
-    }
-
-    @NotNull
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getUid() {
-        return resId;
-    }
-
-    @NotNull
-    @Override
-    @SuppressWarnings("removal")
-    public Class<? extends RecipeWrapper> getRecipeClass() {
-        return RecipeWrapper.class;
     }
 }
