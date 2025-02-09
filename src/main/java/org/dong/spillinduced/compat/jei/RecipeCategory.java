@@ -62,7 +62,7 @@ public class RecipeCategory implements IRecipeCategory<RecipeWrapper> {
             builder.addSlot(RecipeIngredientRole.INPUT, OFFSET * 2, 0).addItemStack(new ItemStack(recipe.otherBlock));
         }
         // pipe fluid
-        builder.addSlot(RecipeIngredientRole.INPUT, 0, OFFSET).addFluidStack(recipe.pipeFluid, 100);
+        builder.addSlot(RecipeIngredientRole.INPUT, 0, OFFSET).addFluidStack(recipe.pipeFluid, 1000);
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, OFFSET, OFFSET).addItemStack(AllBlocks.FLUID_PIPE.asStack());
         // result
         builder.addSlot(RecipeIngredientRole.OUTPUT, OFFSET * 2, OFFSET).addItemStack(new ItemStack(recipe.result.getBlock()));
