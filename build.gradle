@@ -21,7 +21,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
-group = 'org.dong'
+group = 'org.dong.spillinduced'
 version = "${mc_version}-${mod_version}"
 
 java {
