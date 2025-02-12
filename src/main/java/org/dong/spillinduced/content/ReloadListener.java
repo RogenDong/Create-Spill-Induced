@@ -1,13 +1,18 @@
 package org.dong.spillinduced.content;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.CreateSpillInduced;
+import org.dong.spillinduced.CsiPackets;
 import org.dong.spillinduced.utils.ModConfig;
 
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +35,12 @@ public class ReloadListener implements PreparableReloadListener {
         event.addListener(INSTANCE);
     }
 
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        Player player = event.getEntity();
+        CsiPackets.syncServerConfig((ServerPlayer) player);
+    }
+
     @Override
     public CompletableFuture<Void> reload(PreparationBarrier b,
                                           ResourceManager m,
@@ -40,6 +51,7 @@ public class ReloadListener implements PreparableReloadListener {
         LOGGER.info("服务端 reload...");
         return CompletableFuture
                 .runAsync(CONFIG::reload, gameExecutor)
+                .thenRunAsync(CsiPackets::syncServerConfig, gameExecutor)
                 .thenCompose(b::wait);
     }
 }

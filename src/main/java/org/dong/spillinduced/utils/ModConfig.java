@@ -27,6 +27,7 @@ public class ModConfig {
     private static ModConfig instance;
     private MessageDigest md5Handler;
     private byte[] configCache = null;
+    private String _configCache = null;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final File FILE_CFG = new File("config", "create-spill-induced.json");
     private final static long reloadInterval = 10000;
@@ -36,6 +37,10 @@ public class ModConfig {
 
     public static ModConfig getInstance() {
         return instance;
+    }
+
+    public String getConfigJson() {
+        return _configCache;
     }
 
     public void init() {
@@ -55,8 +60,8 @@ public class ModConfig {
                 if (bs == null) return;
 
                 configCache = bs.md5;
-                String json = new String(bs.raw, StandardCharsets.UTF_8);
-                config = gson.fromJson(json, ConfigRootNode.class);
+                _configCache = new String(bs.raw, StandardCharsets.UTF_8);
+                config = gson.fromJson(_configCache, ConfigRootNode.class);
             } catch (Exception e) {
                 LOGGER.error("配置文件反序列化失败!!", e);
                 return;
@@ -69,7 +74,8 @@ public class ModConfig {
             try {
                 config = ConfigRootNode.defaultConfig();
                 if (FILE_CFG.exists()) FILE_CFG.delete();
-                Files.writeString(FILE_CFG.toPath(), gson.toJson(config), StandardCharsets.UTF_8);
+                _configCache = gson.toJson(config);
+                Files.writeString(FILE_CFG.toPath(), _configCache, StandardCharsets.UTF_8);
                 ok = true;
             } catch (IOException ioe) {
                 LOGGER.error("无法写入配置文件!!", ioe);
@@ -85,17 +91,9 @@ public class ModConfig {
         config.gen.forEach(this::mapping);
     }
 
-    public void reload() {
-        long now = System.currentTimeMillis();
-        if (now - preReloadTime < reloadInterval) return;
+    public void reload(String json) {
+        if (json == null || json.isEmpty()) return;
 
-        FileBytes bs = getConfigBytes();
-        preReloadTime = now;
-        if (bs == null || Arrays.equals(configCache, bs.md5)) return;
-
-        LOGGER.info("重载配置文件...");
-        configCache = bs.md5;
-        String json = new String(bs.raw, StandardCharsets.UTF_8);
         ConfigRootNode config;
         try {
             config = gson.fromJson(json, ConfigRootNode.class);
@@ -107,6 +105,20 @@ public class ModConfig {
         LOGGER.info("重新生成映射...");
         resultMapping.clear();
         config.gen.forEach(this::mapping);
+    }
+
+    public void reload() {
+        long now = System.currentTimeMillis();
+        if (now - preReloadTime < reloadInterval) return;
+
+        FileBytes bs = getConfigBytes();
+        preReloadTime = now;
+        if (bs == null || Arrays.equals(configCache, bs.md5)) return;
+
+        LOGGER.info("重载配置文件...");
+        configCache = bs.md5;
+        _configCache = new String(bs.raw, StandardCharsets.UTF_8);
+        reload(_configCache);
     }
 
     private void mapping(DefaultGen gen) {

@@ -21,5 +21,6 @@ public class CreateSpillInduced {
     private void setup(final FMLCommonSetupEvent event) {
         ModConfig config = new ModConfig();
         config.init();
+        CsiPackets.registerPackets();
     }
 }
