@@ -1,13 +1,13 @@
 package org.dong.spillinduced.compat.jei;
 
-import com.simibubi.create.foundation.utility.Components;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.CreateSpillInduced;
@@ -20,6 +20,7 @@ import java.util.List;
 public class CreateSpillInducedJEI implements IModPlugin {
     private static final Logger LOGGER = CreateSpillInduced.LOGGER;
     private static final ResourceLocation ID = new ResourceLocation(CreateSpillInduced.MOD_ID, "jei_plugin");
+    private static IRecipeManager recipeManager;
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -40,9 +41,11 @@ public class CreateSpillInducedJEI implements IModPlugin {
                 .sorted()
                 .toList();
         registration.addRecipes(new RecipeType<>(ID, RecipeWrapper.class), all);
+    }
 
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null)
-            player.displayClientMessage(Components.literal("JEI 完成配方注册。"), false);
+    @Override
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
+        IModPlugin.super.onRuntimeAvailable(jeiRuntime);
+        recipeManager = jeiRuntime.getRecipeManager();
     }
 }

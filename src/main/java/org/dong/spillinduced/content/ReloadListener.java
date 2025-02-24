@@ -38,7 +38,7 @@ public class ReloadListener implements PreparableReloadListener {
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        LOGGER.info("onPlayerJoin...");
+        if (Utils.serverIsNotReady()) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
         CsiPackets.syncServerConfig(player);
     }

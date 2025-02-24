@@ -8,7 +8,6 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent.Context;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.CreateSpillInduced;
-import org.dong.spillinduced.compat.jei.CreateSpillInducedJEI;
 import org.dong.spillinduced.utils.ModConfig;
 
 import java.util.function.Supplier;
@@ -54,15 +53,13 @@ public class SConfigPacket {
     private static void trySetConfig(String json, Context ctx) {
         if (ctx.getDirection() != NetworkDirection.PLAY_TO_CLIENT && !CreateSpillInduced.isJeiLoaded()) return;
 
-        LOGGER.info("Received config from the server: {}", json);
+//        LOGGER.info("Received config from the server: {}", json);
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
         try {
             ModConfig.getInstance().reload(json);
-            CreateSpillInducedJEI.reRegisterRecipes();
-
-            player.displayClientMessage(Components.literal("已同步服务端配置。"), false);
+//            player.displayClientMessage(Components.literal("已同步服务端配置。"), false);
         } catch (Exception e) {
             player.displayClientMessage(Components.literal("Something went wrong while trying to synchronizing server config. Check the client logs for more information"), false);
             LOGGER.warn("Exception during client-side config value set:", e);
