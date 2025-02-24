@@ -1,19 +1,20 @@
 package org.dong.spillinduced.content;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.CreateSpillInduced;
 import org.dong.spillinduced.CsiPackets;
 import org.dong.spillinduced.utils.ModConfig;
+import org.dong.spillinduced.utils.Utils;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -37,8 +38,9 @@ public class ReloadListener implements PreparableReloadListener {
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        Player player = event.getEntity();
-        CsiPackets.syncServerConfig((ServerPlayer) player);
+        LOGGER.info("onPlayerJoin...");
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        CsiPackets.syncServerConfig(player);
     }
 
     @Override
@@ -48,10 +50,19 @@ public class ReloadListener implements PreparableReloadListener {
                                           ProfilerFiller reloadProfiler,
                                           Executor backgroundExecutor,
                                           Executor gameExecutor) {
-        LOGGER.info("服务端 reload...");
+        LOGGER.info("reload...");
         return CompletableFuture
-                .runAsync(CONFIG::reload, gameExecutor)
-                .thenRunAsync(CsiPackets::syncServerConfig, gameExecutor)
+                .runAsync(this::run, gameExecutor)
                 .thenCompose(b::wait);
+    }
+
+    private void run() {
+        CONFIG.reload();
+
+        if (Utils.isServerNoReady()) return;
+        PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
+        if (playerList.getPlayerCount() < 1) return;
+
+        CsiPackets.syncServerConfig();
     }
 }

@@ -1,5 +1,6 @@
 package org.dong.spillinduced;
 
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -14,6 +15,8 @@ public class CreateSpillInduced {
 
     public static final String MOD_ID = "createspillinduced";
 
+    private static boolean IS_JEI_LOADED = false;
+
     public CreateSpillInduced() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     }
@@ -22,5 +25,11 @@ public class CreateSpillInduced {
         ModConfig config = new ModConfig();
         config.init();
         CsiPackets.registerPackets();
+        IS_JEI_LOADED = ModList.get().isLoaded("jei");
+        LOGGER.info("is JEI loaded: " + IS_JEI_LOADED);
+    }
+
+    public static boolean isJeiLoaded() {
+        return IS_JEI_LOADED;
     }
 }

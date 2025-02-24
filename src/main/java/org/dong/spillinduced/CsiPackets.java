@@ -10,8 +10,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.Logger;
 import org.dong.spillinduced.infrastructure.command.SConfigPacket;
 import org.dong.spillinduced.utils.ModConfig;
-
-import java.util.Optional;
+import org.dong.spillinduced.utils.Utils;
 
 public class CsiPackets {
     private static final Logger LOGGER = CreateSpillInduced.LOGGER;
@@ -32,12 +31,12 @@ public class CsiPackets {
                 SConfigPacket.class,
                 SConfigPacket::write,
                 SConfigPacket::read,
-                SConfigPacket.Handler::onMessage,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+                SConfigPacket.Handler::onMessage);
     }
 
     public static void syncServerConfig() {
-        LOGGER.info("发送服务端配置数据包...");
+        if (Utils.isServerNoReady()) return;
+        LOGGER.info("广播服务端配置数据...");
         try {
             NETWORK.send(PacketDistributor.ALL.noArg(), new SConfigPacket(CONFIG.getConfigJson()));
         } catch (Exception e) {
@@ -46,7 +45,7 @@ public class CsiPackets {
     }
 
     public static void syncServerConfig(ServerPlayer player) {
-        if (player == null) return;
+        if (Utils.isServerNoReady() || player == null) return;
         GameProfile profile = player.getGameProfile();
         LOGGER.info("Syncing config to {} ({})", profile.getName(), profile.getId());
         try {
