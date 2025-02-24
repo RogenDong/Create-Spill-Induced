@@ -35,7 +35,7 @@ public class CsiPackets {
     }
 
     public static void syncServerConfig() {
-        if (Utils.isServerNoReady()) return;
+        if (Utils.serverIsNotReady()) return;
         LOGGER.info("广播服务端配置数据...");
         try {
             NETWORK.send(PacketDistributor.ALL.noArg(), new SConfigPacket(CONFIG.getConfigJson()));
@@ -45,7 +45,7 @@ public class CsiPackets {
     }
 
     public static void syncServerConfig(ServerPlayer player) {
-        if (Utils.isServerNoReady() || player == null) return;
+        if (Utils.serverIsNotReady() || player == null) return;
         GameProfile profile = player.getGameProfile();
         LOGGER.info("Syncing config to {} ({})", profile.getName(), profile.getId());
         try {

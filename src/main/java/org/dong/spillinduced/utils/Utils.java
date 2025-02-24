@@ -20,7 +20,7 @@ public interface Utils {
         return r == null ? null : r.toString();
     }
 
-    static boolean isServerNoReady() {
+    static boolean serverIsNotReady() {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server == null) return true;
         return !FMLEnvironment.dist.isDedicatedServer();

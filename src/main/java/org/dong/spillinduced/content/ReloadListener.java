@@ -59,7 +59,7 @@ public class ReloadListener implements PreparableReloadListener {
     private void run() {
         CONFIG.reload();
 
-        if (Utils.isServerNoReady()) return;
+        if (Utils.serverIsNotReady()) return;
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
         if (playerList.getPlayerCount() < 1) return;
 
